@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import pdf from "html-pdf";
 
 // export async function GET() {
 //   return new Response(generateHTML(), {

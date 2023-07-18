@@ -1,15 +1,13 @@
 import puppeteer from "puppeteer";
-import pdf from "html-pdf";
 
-// export async function GET() {
-//   return new Response(generateHTML(), {
-//     // headers: { "Content-Type": "application/pdf" },
-//     headers: { "Content-Type": "text/html; charset=utf-8; " },
-//   });
-// }
+import React from "react";
+import ReactDOMServer from "react-dom/server";
+import { Table } from "../../../lib/Table";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const stri = generateComponent();
+  console.log({ stri });
   const pdfBuffer = await generatePDF(generateHTML());
 
   return new Response(pdfBuffer, {
@@ -34,6 +32,14 @@ const columns = [
   { key: "name", label: "Organisation" },
   { key: "name", label: "Organisation" },
   { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "Amount" },
+  { key: "name", label: "XOOO" },
 ];
 
 const data = [
@@ -73,6 +79,10 @@ async function generatePDF(htmlString: string) {
 
   await browser.close();
   return pdfBuffer;
+}
+
+function generateComponent() {
+  return ReactDOMServer.renderToString(<Table />);
 }
 
 function generateHTML() {

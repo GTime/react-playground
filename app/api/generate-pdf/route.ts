@@ -7,13 +7,16 @@ import puppeteer from "puppeteer";
 //   });
 // }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const url = new URL(request.url);
   const pdfBuffer = await generatePDF(generateHTML());
 
   return new Response(pdfBuffer, {
     headers: {
       "Content-Type": "application/pdf",
-      // "Content-Disposition": "attachment; filename=generated.pdf",
+      ...(url.searchParams.has("download")
+        ? { "Content-Disposition": "attachment; filename=generated.pdf" }
+        : {}),
     },
   });
 }
@@ -91,7 +94,10 @@ function generateHTML() {
             <tr>
                 ${columns.reduce((acc, col) => {
                   const content: any = row[col.key];
-                  return acc + /*html*/ `<td >${content}</td>`;
+                  return (
+                    acc +
+                    /*html*/ `<td  class="styled-table__heading">${content}</td>`
+                  );
                 }, "")}
             </tr>
             `,
@@ -119,11 +125,12 @@ function style() {
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
-        .styled-table thead tr {
+        .styled-table thead tr{
             background-color: #009879;
             color: #ffffff;
             text-align: left;
         }
+        
 
         .styled-table th,
         .styled-table td {

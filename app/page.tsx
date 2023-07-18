@@ -26,7 +26,7 @@ export default function Page() {
     <div>
       <h1>PDF</h1>
       <button onClick={() => setPreview(true)}>Preview</button>
-      <a href="/api/generate-pdf">Download</a>
+      <a href="/api/generate-pdf?download">Download</a>
       <Table />
       {preview && (
         <section style={style} onClick={() => setPreview(false)}>

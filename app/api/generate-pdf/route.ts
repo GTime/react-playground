@@ -29,7 +29,7 @@ const columns = [
   { key: "name", label: "Organisation" },
   { key: "name", label: "Organisation" },
   { key: "name", label: "Organisation" },
-  { key: "name", label: "Organisation" },
+  { key: "name", label: "Amount" },
 ];
 
 const data = [

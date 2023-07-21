@@ -1,14 +1,20 @@
-import puppeteer from "puppeteer";
-
-import React from "react";
-import ReactDOMServer from "react-dom/server";
-import { Table } from "../../../lib/Table";
+import puppeteer, { PDFOptions, PaperFormat } from "puppeteer";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const stri = generateComponent();
-  console.log({ stri });
-  const pdfBuffer = await generatePDF(generateHTML());
+  const pdfOptions: PDFOptions = {
+    format: (String(url.searchParams.get("format")) as PaperFormat) ?? "A4",
+    landscape: Boolean(url.searchParams.get("landscape")),
+    margin: {
+      top: String(url.searchParams.get("margin_top")) + "px",
+      right: String(url.searchParams.get("margin_right")) + "px",
+      bottom: String(url.searchParams.get("margin_bottom")) + "px",
+      left: String(url.searchParams.get("margin_left")) + "px",
+    },
+  };
+
+  const html = generateHTML();
+  const pdfBuffer = await generatePDF(html, pdfOptions);
 
   return new Response(pdfBuffer, {
     headers: {
@@ -29,15 +35,6 @@ const columns = [
   { key: "name", label: "Organisation" },
   { key: "name", label: "Organisation" },
   { key: "name", label: "Organisation" },
-  { key: "name", label: "Organisation" },
-  { key: "name", label: "Organisation" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
-  { key: "name", label: "Amount" },
   { key: "name", label: "Amount" },
   { key: "name", label: "XOOO" },
 ];
@@ -60,29 +57,61 @@ const data = [
   { name: "Test", point: 670300 },
   { name: "Test", point: 670300 },
   { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
+  { name: "Test", point: 670300 },
 ];
 
-async function generatePDF(htmlString: string) {
+async function generatePDF(htmlString: string, options: PDFOptions) {
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.setContent(htmlString);
 
   const pdfBuffer = await page.pdf({
-    format: "A4",
-    margin: {
-      top: "20px",
-      right: "20px",
-      bottom: "20px",
-      left: "20px",
-    },
+    // landscape: true,
+    displayHeaderFooter: true,
+    headerTemplate: /*html*/ `
+    <header style="padding: 20px 30px; text-align: center; font-size: 4rem">
+      <h1 class="date"></h1>
+    </header>
+    `,
+    footerTemplate: /*html*/ `
+    <footer style="padding: 20px 30px; text-align: center; font-size: 4rem">
+      <h1 class="pageNumber"></h1>
+    </footer>
+    `,
+    ...options,
   });
 
   await browser.close();
   return pdfBuffer;
-}
-
-function generateComponent() {
-  return ReactDOMServer.renderToString(<Table />);
 }
 
 function generateHTML() {
@@ -133,7 +162,6 @@ function style() {
             font-family: sans-serif;
             min-width: 400px;
             max-width: 100%;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
         .styled-table thead tr{
